@@ -8,7 +8,6 @@ void *Allocator::findSpace(size_t space) {
         if (it->data == nullptr)
             continue;
         auto tmp = std::distance( (char *)(it->data), (char *)(std::next(it)->data) );
-        //std::cout << tmp << '-' << it->size << ">=" << space << std::endl;
         if (tmp - it->size >= space)
             return (char *)( it->data ) + it->size;
     }
