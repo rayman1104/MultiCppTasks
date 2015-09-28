@@ -7,11 +7,11 @@ void *Allocator::findSpace(size_t space) {
     for (; std::next(it) != area_copy.end(); ++it) {
         if (it->data == nullptr)
             continue;
-        auto tmp = std::distance( (char *)(it->data), (char *)(std::next(it)->data) );
+        auto tmp = (char *)(std::next(it)->data) - (char *)(it->data);
         if (tmp - it->size >= space)
             return (char *)( it->data ) + it->size;
     }
-    auto tmp = std::distance( (char *)(base), (char *)(it->data) + it->size );
+    auto tmp = (char *)(it->data) - (char *)(base) + it->size;
     if (capacity - tmp >= space)
         return (char *)( it->data ) + it->size;
     return nullptr;
@@ -24,10 +24,10 @@ bool Allocator::hasEnoughSpace(Storage &st, size_t space) {
     if ( it == area_copy.end() )
         return false;
     if ( it == std::prev(area_copy.end())) {
-        auto tmp = std::distance( (char *)(area_copy.begin()->data), (char *)(it->data) );
+        auto tmp = (char *)(it->data) - (char *)(area_copy.begin()->data);
         return (capacity - tmp >= space);
     }
-    auto tmp = std::distance( (char *)(it->data), (char *)(std::next(it)->data) );
+    auto tmp = (char *)(std::next(it)->data) - (char *)(it->data);
     return (tmp - it->size >= space);
 }
 
@@ -55,7 +55,7 @@ void Allocator::realloc(Pointer &p, size_t N) {
     }
     if (N <= p.it->size || hasEnoughSpace(*p.it, N)) {
         p.it->size = N;
-        auto tmp = std::distance( (char *)base, (char *)(p.it->data) );
+        auto tmp = (char *)(p.it->data) - (char *)base;
         if (tmp + N > offset)
             offset = tmp + N;
         return;
@@ -86,7 +86,7 @@ void Allocator::defrag() {
         memcpy(data, iter->it->data, iter->it->size);
         iter->it->data = data;
     }
-    offset = size_t(std::distance( (char *)base, (char *)(std::prev(iter)->it->data) ));
+    offset = (char *)(std::prev(iter)->it->data) - (char *)base;
 }
 
 std::string Allocator::dump() {

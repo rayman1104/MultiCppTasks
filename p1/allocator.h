@@ -50,9 +50,10 @@ class Pointer {
     std::list<Storage>::iterator it;
     bool correct = true;
 
+    Pointer(decltype(it) _it) : it(_it) {}
+
 public:
     Pointer() : it(), correct(false) {}
-    Pointer(decltype(it) _it) : it(_it) {}
 
     void *get() const {
         if (!correct)
